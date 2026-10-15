@@ -13,8 +13,7 @@ Needs **macOS + Xcode** (plus Android Studio for Android).
 ## Install (once, ~2 min)
 
 ```bash
-npx skills add bartwo21/ios-android-simulator-testing -g                 # pick Claude Code
-~/.claude/skills/ios-android-simulator-testing/sim.sh setup              # installs idb for iOS taps
+npx skills add bartwo21/ios-android-simulator-testing -g -a claude-code -y && ~/.claude/skills/ios-android-simulator-testing/sim.sh setup
 ```
 
 Android needs nothing extra; `adb` comes with Android Studio. You just need an emulator (AVD).

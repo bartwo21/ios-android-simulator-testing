@@ -11,8 +11,7 @@ iOS simülatörü ve Android emülatörüyle çalışır. Gereken: **macOS + Xco
 ## Kurulum (bir kerelik, ~2 dk)
 
 ```bash
-npx skills add bartwo21/ios-android-simulator-testing -g     # skill'i kur (Claude Code'u seç)
-~/.claude/skills/ios-android-simulator-testing/sim.sh setup  # iOS dokunuşu için idb'yi kurar
+npx skills add bartwo21/ios-android-simulator-testing -g -a claude-code -y && ~/.claude/skills/ios-android-simulator-testing/sim.sh setup
 ```
 
 Android'de ek kurulum yok; `adb` Android Studio ile gelir. Bir emülatör (AVD) oluşturmuş olman yeter.
