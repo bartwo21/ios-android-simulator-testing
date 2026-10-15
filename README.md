@@ -1,86 +1,99 @@
-# mobile-sim — Claude uygulamanı kendisi açıp test etsin
+# ios-android-simulator-testing — let Claude test your mobile app itself
 
-Claude Code bir ekranı değiştirdiğinde genelde "bir bak, oldu mu?" diye sana sorar. Bu skill ile
-bunu kendisi yapar: simülatörü açar, ekrana gider, butonlara basar, ekran görüntüsü alıp bakar,
-yanlışsa düzeltip tekrar bakar. Sana kalan şey bitmiş işi görmek.
+English · [Türkçe](README.tr.md)
 
-iOS simülatörü ve Android emülatörüyle çalışır. Gereken: **macOS + Xcode** (Android için ayrıca Android Studio).
+When Claude Code changes a screen, it usually asks you to "take a look, does it work?". With this
+skill it checks for itself: it boots the simulator, goes to the screen, taps the buttons, takes a
+screenshot and looks at it, and if something is wrong it fixes it and looks again. You get to see
+finished work.
 
-## Kurulum (bir kerelik, ~2 dk)
+Works with the iOS Simulator and the Android emulator, for Expo, React Native, Flutter or native apps.
+Needs **macOS + Xcode** (plus Android Studio for Android).
+
+## Install (once, ~2 min)
 
 ```bash
-npx skills add bartwo21/mobile-sim -g     # skill'i kur (Claude Code'u seç)
-~/.claude/skills/mobile-sim/sim.sh setup  # iOS dokunuşu için idb'yi kurar
+npx skills add bartwo21/ios-android-simulator-testing -g                 # pick Claude Code
+~/.claude/skills/ios-android-simulator-testing/sim.sh setup              # installs idb for iOS taps
 ```
 
-Android'de ek kurulum yok; `adb` Android Studio ile gelir. Bir emülatör (AVD) oluşturmuş olman yeter.
-Güncellemek için: `npx skills update`.
+Android needs nothing extra; `adb` comes with Android Studio. You just need an emulator (AVD).
+Update later with `npx skills update`.
 
-## Projeye bağlama
+## Hook it up to your project
 
-Proje kökünde `.sim/config`:
+Create `.sim/config` in the project root:
 
 ```sh
-BUNDLE_ID=com.firma.uygulama
-DEVICE="iPhone 17 Pro"     # isteğe bağlı
-AVD=Pixel_8_API_36         # isteğe bağlı (Android)
+BUNDLE_ID=com.company.app
+DEVICE="iPhone 17 Pro"     # optional
+AVD=Pixel_8_API_36         # optional (Android)
 ```
 
-`.sim/` satırını `.gitignore`'a ekle — ekran görüntüleri buraya düşer.
+Add `.sim/` to `.gitignore` — screenshots land there.
 
-**Asıl farkı yaratan:** projeye küçük bir "nasıl çalıştırılır" kartı yaz. Claude her seferinde
-bunu okur ve ilk denemede doğru yere gider. `.claude/skills/<uygulama>-run/SKILL.md`:
+**What makes the real difference:** write a small "how to run" card for the project. Claude reads it
+every time and gets to the right screen on the first try. `.claude/skills/<app>-run/SKILL.md`:
 
 ```markdown
 ---
 name: myapp-run
 description: Use when myapp must be run, screenshotted or tapped through on the simulator.
 ---
-Genel araç: mobile-sim skill'i.
+Generic tool: the ios-android-simulator-testing skill.
 
-## Başlat
-`npx expo start` arka planda, sonra `npx expo run:ios`. Native paket eklenince yeniden derle.
+## Start
+`npx expo start` in the background, then `npx expo run:ios`. Rebuild after adding a native package.
 
-## Giriş
-Giriş ekranında "Demo" butonu var (yalnız __DEV__). Hesap: demo / Demo123!
+## Sign in
+The login screen has a "Demo" button (__DEV__ only). Account: demo / Demo123!
 
-## Deeplink'ler
-| ekran | url |
-|---|---|
-| profil | myapp://profile |
-| ürün | myapp://product/<id> |
+## Deeplinks
+| screen  | url                  |
+|---------|----------------------|
+| profile | myapp://profile      |
+| product | myapp://product/<id> |
 
-## Bilinen tuzaklar
-- (Claude bir şeyde takıldıkça buraya eklesin.)
+## Known traps
+- (Let Claude add to this whenever it gets stuck.)
 ```
 
-İki şey testi gerçekten kolaylaştırır:
-1. **Deeplink** — Claude ekrana dokuna dokuna değil, doğrudan gider. En sağlam yol.
-2. **Geliştirme girişi** — Apple/Google girişini otomasyon geçemez. `__DEV__` altında bir demo
-   hesap butonu ya da otomatik giriş koy.
+Two things make testing much easier:
+1. **Deeplinks** — Claude jumps straight to a screen instead of tapping its way there. The most reliable path.
+2. **A dev sign-in** — Apple/Google sign-in can't be automated. Add a demo-account button or an
+   automatic sign-in under `__DEV__`.
 
-## Kullanımı
+## Usage
 
-Bir şey istemen yeter: *"profil ekranını düzelt ve simülatörde kontrol et"*, *"android'de nasıl
-duruyor, ss al"*, *"giriş → sepet → ödeme akışını dene"*. Claude skill'i kendisi açar.
+Just ask: *"fix the profile screen and check it on the simulator"*, *"how does it look on Android,
+take a screenshot"*, *"try the login → cart → checkout flow"*. Claude opens the skill by itself.
 
-Elle de kullanılabilir:
+You can drive it by hand too:
 
 ```bash
-S=~/.claude/skills/mobile-sim/sim.sh     # Android için: $S -a <komut>
-$S open "myapp://profile"   # ekrana git
-$S shot profil              # ekran görüntüsü → .sim/shots/profil.png
-$S tree                     # ekrandaki butonlar/yazılar + koordinatları
-$S tap "Kaydet"             # yazısına göre dokun
-$S type "merhaba"           # yaz
-$S rec başla / $S rec dur   # video (animasyon kontrolü için)
-$S dark                     # karanlık mod
-$S help                     # hepsi
+S=~/.claude/skills/ios-android-simulator-testing/sim.sh   # Android: $S -a <command>
+$S open "myapp://profile"   # go to a screen
+$S shot profile             # screenshot → .sim/shots/profile.png
+$S tree                     # buttons/text on screen + their coordinates
+$S tap "Save"               # tap by label
+$S type "hello"             # type
+$S rec start / $S rec stop  # video (for checking animations)
+$S dark                     # dark mode
+$S help                     # everything
 ```
 
-## Bilmekte fayda var
+## Good to know
 
-- Simülatörü Claude kullanırken sen de dokunursan birbirinize karışırsınız; o çalışırken izle.
-- iOS ve Android'i aynı anda açma, Mac çok yavaşlar. Biri bitince öbürüne geç.
-- Gerçek hesabınla açık simülatörde Claude'a "silme/satın alma" gibi işleri test ettirme; demo hesap kullan.
-- Bir şey takılırsa Claude'a "bunu proje kartına tuzak olarak yaz" de — bir dahaki sefere takılmaz.
+- If you touch the simulator while Claude is using it, you'll get in each other's way; watch while it works.
+- Don't run iOS and Android at the same time — the Mac slows to a crawl. Finish one, then the other.
+- Don't let Claude test deleting or purchasing on a simulator signed into your real account; use a demo account.
+- When it gets stuck on something, tell Claude "add this to the project card as a trap" — it won't get stuck there again.
+
+## How it works
+
+`sim.sh` wraps `xcrun simctl` + [idb](https://fbidb.io) on iOS and `adb` on Android behind the same
+commands. Coordinates are always screenshot pixels on both platforms. `tree` lists only on-screen
+elements and `tap` refuses off-screen coordinates, so a stale coordinate can't hit a hidden
+"Delete account" button.
+
+MIT License.

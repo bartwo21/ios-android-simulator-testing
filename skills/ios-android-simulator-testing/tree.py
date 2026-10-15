@@ -1,5 +1,5 @@
-# sim.sh tree'nin ayrıştırıcısı. stdin: iOS'ta idb describe-all JSON'u, Android'de
-# uiautomator XML'i. Çıktı: "x,y<TAB>tip<TAB>etiket" — merkez, PİKSEL, yalnız ekrandakiler.
+# Parser behind `sim.sh tree`. stdin: idb describe-all JSON on iOS, uiautomator XML on
+# Android. Output: "x,y<TAB>type<TAB>label" — centre, in PIXELS, on-screen elements only.
 import json, os, re, sys
 import xml.etree.ElementTree as ET
 
@@ -7,7 +7,7 @@ w, h, d = (float(v) for v in os.environ["S"].split())
 needle = os.environ.get("F", "").lower()
 raw = sys.stdin.read().strip()
 if not raw:
-    sys.exit("sim: ekran ağacı boş — uygulama önde mi? (iOS sistem diyalogları ağaçta görünmez)")
+    sys.exit("sim: empty element tree — is the app in front? (iOS system dialogs never show up here)")
 
 rows = []
 if os.environ["FMT"] == "ios":
@@ -20,7 +20,7 @@ else:
     try:
         root = ET.fromstring(raw)
     except ET.ParseError:
-        sys.exit("sim: dump alınamadı — ekranda animasyon sürüyor olabilir, tekrar dene")
+        sys.exit("sim: could not dump the screen — something may be animating, try again")
     for n in root.iter("node"):
         label = (n.get("text") or n.get("content-desc") or "").replace("\n", " ").strip()
         m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", n.get("bounds", ""))
@@ -30,7 +30,7 @@ else:
 
 for x, y, kind, label in rows:
     if not (0 <= x <= w and 0 <= y <= h):
-        continue  # ekran dışı / arka sekme — dokunulamaz
+        continue  # off screen / a background tab — cannot be tapped
     if needle and needle not in label.lower():
         continue
     print("%d,%d\t%s\t%s" % (x, y, kind, label))
