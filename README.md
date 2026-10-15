@@ -70,7 +70,7 @@ $S shot profile             # screenshot → .sim/shots/profile.png
 $S tree                     # buttons/text on screen + their coordinates
 $S tap "Save"               # tap by label
 $S type "hello"             # type
-$S rec start / $S rec stop  # video (for checking animations)
+$S rec start / $S rec stop  # video → frames + one contact sheet Claude can look at
 $S dark                     # dark mode
 $S help                     # everything
 ```
@@ -85,7 +85,8 @@ $S help                     # everything
 ## How it works
 
 `sim.sh` wraps `xcrun simctl` + [idb](https://fbidb.io) on iOS and `adb` on Android behind the same
-commands. Coordinates are always screenshot pixels on both platforms. `tree` lists only on-screen
+commands. Coordinates are always screenshot pixels on both platforms. Recordings are turned into
+frames and a contact sheet with AVFoundation (no ffmpeg), so Claude can check animations and transitions. `tree` lists only on-screen
 elements and `tap` refuses off-screen coordinates, so a stale coordinate can't hit a hidden
 "Delete account" button.
 

@@ -36,7 +36,8 @@ first run from app.json / the Xcode project / Android gradle; edit it only if th
 - **Deeplink when you can, tap when you must.** Taps are for what a deeplink can't reach: buttons, sheets, forms, gestures.
 - **`$S tree` before every tap.** Tap by label: `$S tap "Save"`. Raw pixels only when there is no label.
 - **A screen you did not look at is not verified.** Don't just print the path — say what you saw.
-- **Transitions and animations are not verified on screenshots:** `$S rec start` → action → `$S rec stop`, then inspect frames.
+- **Transitions and animations are not verified on screenshots:** `$S rec start` → action → `$S rec stop`; it prints a
+  `sheet.png` (frames in time order, left→right, top→bottom) — open it with Read. More frames: `$S rec stop 24`.
 - An app that ships on both platforms is done when it was seen on both — but **one at a time**:
   `xcrun simctl shutdown all` / `adb emu kill` in between; both together freeze the Mac.
 

@@ -68,7 +68,7 @@ $S shot profil              # ekran görüntüsü → .sim/shots/profil.png
 $S tree                     # ekrandaki butonlar/yazılar + koordinatları
 $S tap "Kaydet"             # yazısına göre dokun
 $S type "merhaba"           # yaz
-$S rec start / $S rec stop   # video (animasyon kontrolü için)
+$S rec start / $S rec stop   # video → kareler + Claude'un bakabildiği tek bir özet resim
 $S dark                     # karanlık mod
 $S help                     # hepsi
 ```

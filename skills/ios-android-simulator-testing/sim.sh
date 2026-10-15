@@ -257,8 +257,8 @@ ios:dark|ios:light)         xcrun simctl ui "$UDID" appearance "$cmd" ;;
 android:dark|android:light) adb shell cmd uimode night "$([ "$cmd" = dark ] && echo yes || echo no)" ;;
 
 *:rec)
-  # rec start [name] → recording; rec stop → writes the file. Transitions and
-  # animations are verified on video, not on screenshots.
+  # rec start [name] → recording; rec stop [frames] → the mp4 plus frames and a contact
+  # sheet. Transitions and animations are verified on video, not on screenshots.
   mkdir -p "$SHOTS"
   case "${1:-}" in
   start|başla)
@@ -276,9 +276,10 @@ android:dark|android:light) adb shell cmd uimode night "$([ "$cmd" = dark ] && e
     out=$(cat "$SIM_DIR/rec.path")
     [ "$PLATFORM" = android ] && adb pull /sdcard/rec.mp4 "$out" >/dev/null
     rm -f "$SIM_DIR/rec.pid" "$SIM_DIR/rec.path"
-    echo "$out"
-    command -v ffmpeg >/dev/null && echo "frames: ffmpeg -i $out -vf fps=10 $SHOTS/frame-%03d.png" ;;
-  *) die "usage: sim.sh rec start [name] | sim.sh rec stop" ;;
+    echo "video: $out"
+    # Models read images, not video: frames + one contact sheet to open with Read.
+    swift -suppress-warnings "$HERE/frames.swift" "$out" "${out%.mp4}-frames" "${2:-12}" ;;
+  *) die "usage: sim.sh rec start [name] | sim.sh rec stop [frames=12]" ;;
   esac ;;
 
 ios:log)
@@ -307,7 +308,7 @@ For Android put -a before any command:   sim.sh -a shot login
   type "text"               type (tap the field first)
   key enter|delete|back     key press
   dark | light              appearance
-  rec start [name] | rec stop   video (for transitions / animations)
+  rec start [name] | rec stop [n]   video → n frames + one contact sheet (sheet.png) to read
   log [lines]               app logs
 
 Project settings in <project>/.sim/config (written automatically from the project on first run):
