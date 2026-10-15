@@ -19,15 +19,8 @@ Güncellemek için: `npx skills update`.
 
 ## Projeye bağlama
 
-Proje kökünde `.sim/config`:
-
-```sh
-BUNDLE_ID=com.firma.uygulama
-DEVICE="iPhone 17 Pro"     # isteğe bağlı
-AVD=Pixel_8_API_36         # isteğe bağlı (Android)
-```
-
-`.sim/` satırını `.gitignore`'a ekle — ekran görüntüleri buraya düşer.
+Ayar gerekmez: ilk çalıştırmada skill bundle id'yi `app.json`, Xcode projesi ya da Android gradle'dan
+okur, `.sim/config`'i yazar ve `.sim/`'i `.gitignore`'a ekler (ekran görüntüleri oraya kaydedilir).
 
 **Asıl farkı yaratan:** projeye küçük bir "nasıl çalıştırılır" kartı yaz. Claude her seferinde
 bunu okur ve ilk denemede doğru yere gider. `.claude/skills/<uygulama>-run/SKILL.md`:

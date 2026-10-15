@@ -20,7 +20,8 @@ $S help                             # every command
 
 If `<project>/.claude/skills/*-run/SKILL.md` exists, read it FIRST: how to start the app, how to sign in,
 the deeplink map. If there is none, ask the user for those three, then write them into such a card
-(template in the README). Project settings live in `<project>/.sim/config` (`BUNDLE_ID`, `DEVICE`, `AVD`).
+(template in the README). `<project>/.sim/config` (`BUNDLE_ID`, `DEVICE`, `AVD`) is written automatically on the
+first run from app.json / the Xcode project / Android gradle; edit it only if the guess is wrong.
 
 ## Loop
 

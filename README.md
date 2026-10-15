@@ -21,15 +21,8 @@ Update later with `npx skills update`.
 
 ## Hook it up to your project
 
-Create `.sim/config` in the project root:
-
-```sh
-BUNDLE_ID=com.company.app
-DEVICE="iPhone 17 Pro"     # optional
-AVD=Pixel_8_API_36         # optional (Android)
-```
-
-Add `.sim/` to `.gitignore` — screenshots land there.
+Nothing to configure: on the first run the skill reads your bundle id from `app.json`, the Xcode
+project or Android gradle, writes `.sim/config` and adds `.sim/` to `.gitignore` (screenshots go there).
 
 **What makes the real difference:** write a small "how to run" card for the project. Claude reads it
 every time and gets to the right screen on the first try. `.claude/skills/<app>-run/SKILL.md`:

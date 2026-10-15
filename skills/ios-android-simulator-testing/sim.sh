@@ -16,8 +16,23 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SIM_DIR="${SIM_DIR:-.sim}"
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+SIM_DIR="${SIM_DIR:-$ROOT/.sim}"
 SHOTS="$SIM_DIR/shots"
+
+# No .sim/config yet → read the bundle id from the project itself (Expo app.json,
+# the Xcode project, Android gradle), write the config and gitignore .sim/.
+if [ ! -f "$SIM_DIR/config" ] && [[ "${1:-}" != help && "${1:-}" != setup ]]; then
+  conf=$(ROOT="$ROOT" python3 "$HERE/detect.py" || true)
+  if [ -n "$conf" ]; then
+    mkdir -p "$SIM_DIR" && printf '%s\n' "$conf" >"$SIM_DIR/config"
+    echo "sim: wrote $SIM_DIR/config ($(echo "$conf" | tr '\n' ' '))" >&2
+    if git -C "$ROOT" rev-parse >/dev/null 2>&1 && ! git -C "$ROOT" check-ignore -q "$SIM_DIR/config"; then
+      gi="$ROOT/.gitignore"; [ -s "$gi" ] && [ -n "$(tail -c1 "$gi")" ] && echo >>"$gi"
+      echo ".sim/" >>"$gi"; echo "sim: added .sim/ to .gitignore" >&2
+    fi
+  fi
+fi
 [ -f "$SIM_DIR/config" ] && . "$SIM_DIR/config"
 DEVICE="${DEVICE:-iPhone 17 Pro}"
 AVD="${AVD:-}"
@@ -29,7 +44,7 @@ PLATFORM=ios
 [ "${1:-}" = "-a" ] && { PLATFORM=android; shift; }
 
 die() { echo "sim: $*" >&2; exit 1; }
-need_bundle() { [ -n "${BUNDLE_ID:-}" ] || die "no BUNDLE_ID — write .sim/config (see: sim.sh help)"; }
+need_bundle() { [ -n "${BUNDLE_ID:-}" ] || die "no BUNDLE_ID found in the project — write it to $SIM_DIR/config (see: sim.sh help)"; }
 is_num() { [[ "$1" =~ ^[0-9]+$ ]]; }
 
 # ════════════════════════════ iOS ════════════════════════════
@@ -295,7 +310,7 @@ For Android put -a before any command:   sim.sh -a shot login
   rec start [name] | rec stop   video (for transitions / animations)
   log [lines]               app logs
 
-Project settings in <project>/.sim/config:
+Project settings in <project>/.sim/config (written automatically from the project on first run):
   BUNDLE_ID=com.company.app   # if the Android package differs: ANDROID_ID=...
   DEVICE="iPhone 17 Pro"      # AVD=Pixel_8_API_36
 EOF
