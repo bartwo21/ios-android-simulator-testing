@@ -22,8 +22,9 @@ Güncellemek için: `npx skills update`.
 Ayar gerekmez: ilk çalıştırmada skill bundle id'yi `app.json`, Xcode projesi ya da Android gradle'dan
 okur, `.sim/config`'i yazar ve `.sim/`'i `.gitignore`'a ekler (ekran görüntüleri oraya kaydedilir).
 
-**Asıl farkı yaratan:** projeye küçük bir "nasıl çalıştırılır" kartı yaz. Claude her seferinde
-bunu okur ve ilk denemede doğru yere gider. `.claude/skills/<uygulama>-run/SKILL.md`:
+**Proje kartı:** Claude ilk kullanımda uygulamanın nasıl başlatıldığını, nasıl giriş yapıldığını ve
+deeplink'leri sorar, cevapları `.claude/skills/<uygulama>-run/SKILL.md` kartına kendisi yazar. Sonraki
+seferlerde bu kartı okuyup doğrudan doğru ekrana gider. Kart şuna benzer:
 
 ```markdown
 ---

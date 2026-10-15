@@ -24,8 +24,9 @@ Update later with `npx skills update`.
 Nothing to configure: on the first run the skill reads your bundle id from `app.json`, the Xcode
 project or Android gradle, writes `.sim/config` and adds `.sim/` to `.gitignore` (screenshots go there).
 
-**What makes the real difference:** write a small "how to run" card for the project. Claude reads it
-every time and gets to the right screen on the first try. `.claude/skills/<app>-run/SKILL.md`:
+**Project card:** on first use Claude asks how to start the app, how to sign in and which deeplinks
+exist, then writes the answers to `.claude/skills/<app>-run/SKILL.md` itself. Next time it reads the
+card and goes straight to the right screen. A card looks like this:
 
 ```markdown
 ---
